@@ -308,13 +308,34 @@ namespace DictionaryApp
                 return;
             }
 
-            Console.Write("Введіть ім'я файлу для експорту: ");
+            Console.Write("Введіть ім'я файлу для експорту (наприклад, word.txt): ");
             string fileName = Console.ReadLine()?.Trim();
 
-            if (!string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(fileName))
+            {
+                Console.WriteLine("Ім'я файлу не може бути порожнім");
+                return;
+            }
+
+            if (File.Exists(fileName))
+            {
+                Console.WriteLine("Файл із такою назвою вже існує. Перезаписати? (y/n)");
+                string overwrite = Console.ReadLine()?.Trim().ToLower();
+                if (overwrite != "y")
+                {
+                    Console.WriteLine("Експорт скасовано");
+                    return;
+                }
+            }
+
+            try
             {
                 File.WriteAllText(fileName, $"{word}: {string.Join(", ", words[word])}");
-                Console.WriteLine("Слово експортовано");
+                Console.WriteLine("Слово успішно експортовано до файлу");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Помилка під час експорту: {ex.Message}");
             }
         }
 
